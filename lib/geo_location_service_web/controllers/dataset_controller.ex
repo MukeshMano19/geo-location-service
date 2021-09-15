@@ -44,22 +44,21 @@ defmodule GeoLocationServiceWeb.DatasetController do
   def page_index(conn, params) do
     ip_address = get_in(params, ["ip_address"])
 
-    datasets =
-      case ip_address in [nil, ""] do
-        true ->
-          page = Dataset |> Repo.paginate(params)
-          render(conn, "index.html", datasets: page.entries, search_term: ip_address, page: page)
+    case ip_address in [nil, ""] do
+      true ->
+        page = Dataset |> Repo.paginate(params)
+        render(conn, "index.html", datasets: page.entries, search_term: ip_address, page: page)
 
-        _ ->
-          data = Services.get_geo_data_by_ip(ip_address)
-          datasets = if data == nil, do: [], else: [data]
+      _ ->
+        data = Services.get_dataset_by_ip(ip_address)
+        datasets = if data == nil, do: [], else: [data]
 
-          render(conn, "index.html", datasets: datasets, search_term: ip_address, page: nil)
-      end
+        render(conn, "index.html", datasets: datasets, search_term: ip_address, page: nil)
+    end
   end
 
-  def get_geo_data_by_ip(conn, %{"ip_address" => ip_address}) do
-    case Services.get_geo_data_by_ip(ip_address) do
+  def get_dataset_by_ip(conn, %{"ip_address" => ip_address}) do
+    case Services.get_dataset_by_ip(ip_address) do
       nil -> {:error, :not_found}
       dataset -> render(conn, "show.json", dataset: dataset)
     end

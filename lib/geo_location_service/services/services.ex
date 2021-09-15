@@ -103,5 +103,19 @@ defmodule GeoLocationService.Services do
     Dataset.changeset(dataset, attrs)
   end
 
-  def get_geo_data_by_ip(ip_address), do: Repo.get_by(Dataset, ip_address: ip_address)
+  @doc """
+  Gets a single dataset with the given ip address.
+
+  Raises `Ecto.NoResultsError` if the Dataset does not exist.
+
+  ## Examples
+
+      iex> get_dataset_by_ip("123.67.23.2")
+      %Dataset{}
+
+      iex> get_dataset_by_ip("123.67.2.24")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_dataset_by_ip(ip_address), do: Repo.get_by(Dataset, ip_address: ip_address)
 end

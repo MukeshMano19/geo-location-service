@@ -96,5 +96,10 @@ defmodule GeoLocationService.ServicesTest do
       dataset = dataset_fixture()
       assert %Ecto.Changeset{} = Services.change_dataset(dataset)
     end
+
+    test "get_dataset_by_ip!/1 returns the dataset with given ip address" do
+      dataset = dataset_fixture()
+      assert Services.get_dataset_by_ip(dataset.ip_address) == dataset
+    end
   end
 end
