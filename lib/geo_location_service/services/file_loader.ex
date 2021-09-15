@@ -6,7 +6,8 @@ defmodule GeoLocationService.FileLoader do
   alias GeoLocationService.{Services, Repo}
   alias GeoLocationService.Services.Dataset
 
-  @batch_size 1000
+  @file_path "data_files/datasets.csv"
+  @batch_size 10000
 
   @doc """
   Returns the list of datasets.
@@ -19,20 +20,23 @@ defmodule GeoLocationService.FileLoader do
   """
 
   def sync_data() do
-    {micro_seconds, result} = :timer.tc(fn -> start_import() end)
+    {micro_seconds, results} = :timer.tc(fn -> start_import() end)
 
     IO.inspect("----------------- Result ----------------")
     IO.inspect(micro_seconds / 1_000_000, label: "Time taken")
-    IO.inspect(result)
+    IO.inspect(Enum.map(results, & &1.total) |> Enum.sum(), label: "Total")
+    IO.inspect(Enum.map(results, & &1.accepted) |> Enum.sum(), label: "Accepted")
+    IO.inspect(Enum.map(results, & &1.discarded) |> Enum.sum(), label: "Discarded")
     IO.inspect("-----------------------------------------")
   end
 
   def start_import() do
-    File.stream!("data_files/datasets.csv")
+    File.stream!(@file_path)
     |> get_records_as_map
-    |> Enum.each(fn batch ->
-      res = dump_data_to_db(batch)
-      IO.inspect(res)
+    |> Enum.take(2)
+    |> Enum.reduce([], fn batch, acc ->
+      result = dump_data_to_db(batch)
+      acc ++ [result]
     end)
   end
 
@@ -86,8 +90,8 @@ defmodule GeoLocationService.FileLoader do
       |> Enum.reduce(transaction, fn {set, idx}, %{multi: multi_acc, results: results} = trns ->
         changeset = %Dataset{} |> Dataset.changeset(parse_data(set))
 
-        case changeset.errors do
-          [] ->
+        case changeset do
+          %{valid?: true} ->
             %{
               trns
               | multi:

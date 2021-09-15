@@ -102,4 +102,6 @@ defmodule GeoLocationService.Services do
   def change_dataset(%Dataset{} = dataset, attrs \\ %{}) do
     Dataset.changeset(dataset, attrs)
   end
+
+  def get_geo_data_by_ip(ip_address), do: Repo.get_by(Dataset, ip_address: ip_address)
 end
