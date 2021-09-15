@@ -9,20 +9,16 @@
     <script defer type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </head>
   <body>
-    <main role="main">
+    <main role="main" class="main-layout">
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
-        <div style="padding: 50px;text-align:center">
             <header>
               <h1>FindHotel - Geo Location Service</h1>
             </header>
           <div>
-          <div>
             <%= form_for @conn, Routes.dataset_path(@conn, :page_index), [method: :get, class: "pull-center"], fn f -> %>
-            <div style="display:flex;gap:10px;justify-content:center">
-              <div style="width:300px">
-                <%= search_input f, :ip_address, placeholder: "Search by IP Address ..." %>
-              </div>
+            <div class="search-form">
+              <%= search_input f, :ip_address, placeholder: "Search by IP Address ..." %>
               <%= submit "Search" %>
             </div>
             <% end %>

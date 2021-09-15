@@ -50,8 +50,6 @@ defmodule GeoLocationServiceWeb.DatasetController do
           page = Dataset |> Repo.paginate(params)
           render(conn, "index.html", datasets: page.entries, search_term: ip_address, page: page)
 
-        # Services.list_datasets() |> Enum.take(100)
-
         _ ->
           data = Services.get_geo_data_by_ip(ip_address)
           datasets = if data == nil, do: [], else: [data]

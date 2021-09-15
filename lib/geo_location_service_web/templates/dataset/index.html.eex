@@ -1,5 +1,5 @@
 <%= if @search_term not in [nil, ""] do %>
-<h2>Search result for <strong><%= @search_term %></strong></h2>
+<h3>Search result for <strong><%= @search_term %></strong></h3>
 <% end %>
 
 <%= if length(@datasets) > 0 do %>
@@ -32,7 +32,7 @@
 <% end %>
 
 <%= if @page != nil do %>
-  <div style="display:flex;justify-content:end">
+  <div class="pagination">
     <%= if @page.page_number > 1 do %>
       <%= link "<< Prev Page", to: Routes.dataset_path(@conn, :page_index, page: @page.page_number - 1) %> 
       <span style="padding: 0 8px">|</span>
