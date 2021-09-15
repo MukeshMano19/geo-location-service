@@ -7,7 +7,7 @@ defmodule GeoLocationService.FileLoader do
   alias GeoLocationService.Services.Dataset
 
   @file_path "data_files/datasets.csv"
-  @batch_size 50000
+  @batch_size 25000
 
   @doc """
   Returns the list of datasets.
@@ -19,8 +19,8 @@ defmodule GeoLocationService.FileLoader do
 
   """
 
-  def sync_data() do
-    {micro_seconds, results} = :timer.tc(fn -> start_import() end)
+  def sync_data(file \\ @file_path) do
+    {micro_seconds, results} = :timer.tc(fn -> start_import(file) end)
 
     statistics = %{
       time_taken: micro_seconds / 1_000_000,
@@ -29,13 +29,13 @@ defmodule GeoLocationService.FileLoader do
       discarded: get_sum(results, :discarded)
     }
 
-    IO.inspect("----------------- Result ----------------")
     IO.inspect(statistics, label: "Statistics")
-    IO.inspect("-----------------------------------------")
+
+    statistics
   end
 
-  def start_import() do
-    File.stream!(@file_path)
+  def start_import(file) do
+    File.stream!(file)
     |> get_records_as_map
     |> Enum.reduce([], fn batch, acc ->
       result = dump_data_to_db(batch)
@@ -82,40 +82,30 @@ defmodule GeoLocationService.FileLoader do
   end
 
   defp dump_data_to_db(datasets) do
-    transaction = %{
-      multi: Ecto.Multi.new(),
-      results: %{total: length(datasets), accepted: 0, discarded: 0}
-    }
-
-    updated_transaction =
+    {:ok, transactions} =
       datasets
       |> Enum.with_index()
-      |> Enum.reduce(transaction, fn {set, idx}, %{multi: multi_acc, results: results} = trns ->
-        changeset = %Dataset{} |> Dataset.changeset(parse_data(set))
-
-        case changeset do
-          %{valid?: true} ->
-            %{
-              trns
-              | multi:
-                  Ecto.Multi.insert(multi_acc, {:insert, idx}, changeset,
-                    on_conflict: :replace_all,
-                    conflict_target: :ip_address
-                  ),
-                results: Map.put(results, :accepted, results.accepted + 1)
-            }
+      |> Enum.reduce(Ecto.Multi.new(), fn {set, idx}, multi ->
+        case %Dataset{} |> Dataset.changeset(parse_data(set)) do
+          %{valid?: true} = changeset ->
+            Ecto.Multi.insert(multi, {:insert, idx}, changeset,
+              on_conflict: :replace_all,
+              conflict_target: :ip_address
+            )
 
           _ ->
-            %{
-              trns
-              | multi: multi_acc,
-                results: Map.put(results, :discarded, results.discarded + 1)
-            }
+            multi
         end
       end)
+      |> Repo.transaction()
 
-    Repo.transaction(updated_transaction.multi)
-    updated_transaction.results
+    total = length(datasets)
+    # Eventhough Repo.transaction handled unique constrains, still it'll returns response including dublicates.
+    # In order to count the exact count which reflected on the table we used Enum.uniq options to get the exact count. 
+    accepted = Enum.uniq_by(transactions, fn {_, v} -> v.ip_address end) |> length
+    discarded = total - accepted
+
+    %{total: total, accepted: accepted, discarded: discarded}
   end
 
   defp parse_data(map) do
