@@ -9,7 +9,7 @@ defmodule GeoLocationService.Repo.Migrations.CreateDatasets do
       add :city, :string
       add :latitude, :float
       add :longitude, :float
-      add :mystery_value, :integer
+      add :mystery_value, :bigint
 
       timestamps()
     end

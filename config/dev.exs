@@ -7,7 +7,8 @@ config :geo_location_service, GeoLocationService.Repo,
   database: "geo_location_service_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10,
+  timeout: 240_000
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

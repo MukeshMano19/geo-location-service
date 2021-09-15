@@ -19,5 +19,6 @@ defmodule GeoLocationService.Services.Dataset do
     dataset
     |> cast(attrs, [:ip_address, :country_code, :country, :city, :latitude, :longitude, :mystery_value])
     |> validate_required([:ip_address, :country_code, :country, :city, :latitude, :longitude, :mystery_value])
+    |> unique_constraint(:ip_address, message: "IP Address must be unique!")
   end
 end
