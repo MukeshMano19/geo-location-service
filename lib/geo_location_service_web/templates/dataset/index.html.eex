@@ -1,0 +1,36 @@
+<%= if @search_term not in [nil, ""] do %>
+<h2>Search result for <strong><%= @search_term %></strong></h2>
+<% end %>
+
+<%= if length(@datasets) > 0 do %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>IP Address</th>
+        <th>City</th>
+        <th>Country</th>
+        <th>Country Code</th>
+        <th>latitude</th>
+        <th>Longitude</th>
+        <th>Mystery Value</th>
+      </tr>
+    </thead>
+    <tbody>
+    <%= for dataset <- @datasets do %>
+      <tr>
+        <td><%= dataset.ip_address %></td>
+        <td><%= dataset.city %></td>
+        <td><%= dataset.country %></td>
+        <td><%= dataset.country_code %></td>
+        <td><%= dataset.latitude %></td>
+        <td><%= dataset.longitude %></td>
+        <td><%= dataset.mystery_value %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<%= if length(@datasets) == 0 do %>
+  <p>No Results Found!</p>
+<% end %>
