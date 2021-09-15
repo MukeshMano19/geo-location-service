@@ -3,11 +3,11 @@ defmodule GeoLocationService.FileLoader do
   The Services context.
   """
 
-  alias GeoLocationService.{Services, Repo}
+  alias GeoLocationService.Repo
   alias GeoLocationService.Services.Dataset
 
   @file_path "data_files/datasets.csv"
-  @batch_size 10000
+  @batch_size 50000
 
   @doc """
   Returns the list of datasets.
@@ -22,18 +22,21 @@ defmodule GeoLocationService.FileLoader do
   def sync_data() do
     {micro_seconds, results} = :timer.tc(fn -> start_import() end)
 
+    statistics = %{
+      time_taken: micro_seconds / 1_000_000,
+      total_entries: get_sum(results, :total),
+      accepted: get_sum(results, :accepted),
+      discarded: get_sum(results, :discarded)
+    }
+
     IO.inspect("----------------- Result ----------------")
-    IO.inspect(micro_seconds / 1_000_000, label: "Time taken")
-    IO.inspect(Enum.map(results, & &1.total) |> Enum.sum(), label: "Total")
-    IO.inspect(Enum.map(results, & &1.accepted) |> Enum.sum(), label: "Accepted")
-    IO.inspect(Enum.map(results, & &1.discarded) |> Enum.sum(), label: "Discarded")
+    IO.inspect(statistics, label: "Statistics")
     IO.inspect("-----------------------------------------")
   end
 
   def start_import() do
     File.stream!(@file_path)
     |> get_records_as_map
-    |> Enum.take(20)
     |> Enum.reduce([], fn batch, acc ->
       result = dump_data_to_db(batch)
       acc ++ [result]
@@ -124,4 +127,6 @@ defmodule GeoLocationService.FileLoader do
       end
     end)
   end
+
+  defp get_sum(entries, key), do: Enum.map(entries, &Map.get(&1, key, 0)) |> Enum.sum()
 end

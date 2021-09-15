@@ -12,19 +12,23 @@
     <main role="main">
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
-        <div style="padding: 50px">
+        <div style="padding: 50px;text-align:center">
             <header>
               <h1>FindHotel - Geo Location Service</h1>
             </header>
           <div>
-          <div style="max-width:500px">
+          <div>
             <%= form_for @conn, Routes.dataset_path(@conn, :page_index), [method: :get, class: "pull-center"], fn f -> %>
-              <%= search_input f, :ip_address %>
+            <div style="display:flex;gap:10px;justify-content:center">
+              <div style="width:300px">
+                <%= search_input f, :ip_address, placeholder: "Search by IP Address ..." %>
+              </div>
               <%= submit "Search" %>
+            </div>
             <% end %>
           </div>
 
-            <%= @inner_content %>
+          <%= @inner_content %>
         </div>
     </main>
   </body>

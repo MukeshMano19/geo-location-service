@@ -20,7 +20,7 @@ defmodule GeoLocationService.MixProject do
   def application do
     [
       mod: {GeoLocationService.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :scrivener_ecto]
     ]
   end
 
@@ -44,7 +44,9 @@ defmodule GeoLocationService.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      # For Table pagination
+      {:scrivener_ecto, "~> 2.7"}
     ]
   end
 

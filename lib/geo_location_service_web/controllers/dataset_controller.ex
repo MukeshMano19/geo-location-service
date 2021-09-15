@@ -1,7 +1,7 @@
 defmodule GeoLocationServiceWeb.DatasetController do
   use GeoLocationServiceWeb, :controller
 
-  alias GeoLocationService.Services
+  alias GeoLocationService.{Services, Repo}
   alias GeoLocationService.Services.Dataset
 
   action_fallback GeoLocationServiceWeb.FallbackController
@@ -47,14 +47,17 @@ defmodule GeoLocationServiceWeb.DatasetController do
     datasets =
       case ip_address in [nil, ""] do
         true ->
-          Services.list_datasets() |> Enum.take(100)
+          page = Dataset |> Repo.paginate(params)
+          render(conn, "index.html", datasets: page.entries, search_term: ip_address, page: page)
+
+        # Services.list_datasets() |> Enum.take(100)
 
         _ ->
           data = Services.get_geo_data_by_ip(ip_address)
-          if data == nil, do: [], else: [data]
-      end
+          datasets = if data == nil, do: [], else: [data]
 
-    render(conn, "index.html", datasets: datasets, search_term: ip_address)
+          render(conn, "index.html", datasets: datasets, search_term: ip_address, page: nil)
+      end
   end
 
   def get_geo_data_by_ip(conn, %{"ip_address" => ip_address}) do

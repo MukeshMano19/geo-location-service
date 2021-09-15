@@ -31,6 +31,18 @@
   </table>
 <% end %>
 
+<%= if @page != nil do %>
+  <div style="display:flex;justify-content:end">
+    <%= if @page.page_number > 1 do %>
+      <%= link "<< Prev Page", to: Routes.dataset_path(@conn, :page_index, page: @page.page_number - 1) %> 
+      <span style="padding: 0 8px">|</span>
+    <% end %>
+    <%= if @page.page_number < @page.total_pages do %>
+      <%= link "Next Page >>", to: Routes.dataset_path(@conn, :page_index, page: @page.page_number + 1) %>
+    <% end %>
+  </div>
+<% end %>
+
 <%= if length(@datasets) == 0 do %>
   <p>No Results Found!</p>
 <% end %>
