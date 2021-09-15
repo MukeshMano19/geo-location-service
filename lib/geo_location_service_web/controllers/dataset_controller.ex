@@ -41,6 +41,22 @@ defmodule GeoLocationServiceWeb.DatasetController do
     end
   end
 
+  def page_index(conn, params) do
+    ip_address = get_in(params, ["ip_address"])
+
+    datasets =
+      case ip_address in [nil, ""] do
+        true ->
+          Services.list_datasets() |> Enum.take(100)
+
+        _ ->
+          data = Services.get_geo_data_by_ip(ip_address)
+          if data == nil, do: [], else: [data]
+      end
+
+    render(conn, "index.html", datasets: datasets, search_term: ip_address)
+  end
+
   def get_geo_data_by_ip(conn, %{"ip_address" => ip_address}) do
     case Services.get_geo_data_by_ip(ip_address) do
       nil -> {:error, :not_found}

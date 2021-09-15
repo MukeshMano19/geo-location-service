@@ -33,7 +33,7 @@ defmodule GeoLocationService.FileLoader do
   def start_import() do
     File.stream!(@file_path)
     |> get_records_as_map
-    |> Enum.take(2)
+    |> Enum.take(20)
     |> Enum.reduce([], fn batch, acc ->
       result = dump_data_to_db(batch)
       acc ++ [result]

@@ -16,7 +16,7 @@ defmodule GeoLocationServiceWeb.Router do
   scope "/", GeoLocationServiceWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", DatasetController, :page_index
   end
 
   scope "/api", GeoLocationServiceWeb do
