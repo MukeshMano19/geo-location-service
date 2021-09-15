@@ -5,25 +5,32 @@ defmodule GeoLocationServiceWeb.DatasetControllerTest do
   alias GeoLocationService.Services.Dataset
 
   @create_attrs %{
-    city: "some city",
-    country: "some country",
-    country_code: "some country_code",
-    ip_address: "some ip_address",
+    city: "New Neva City",
+    country: "Nicaragua",
+    country_code: "CC",
+    ip_address: "123.567.98.66",
     latitude: 120.5,
     longitude: 120.5,
     mystery_value: 42
   }
   @update_attrs %{
-    city: "some updated city",
-    country: "some updated country",
-    country_code: "some updated country_code",
-    ip_address: "some updated ip_address",
-    latitude: 456.7,
-    longitude: 456.7,
-    mystery_value: 43
+    city: "New Neva",
+    country: "Nicaragua",
+    country_code: "CZ",
+    ip_address: "123.567.98.11",
+    latitude: -68.31023296602508,
+    longitude: -37.62435199624531,
+    mystery_value: 7_301_823_115
   }
-  @invalid_attrs %{city: nil, country: nil, country_code: nil, ip_address: nil, latitude: nil, longitude: nil, mystery_value: nil}
-
+  @invalid_attrs %{
+    city: nil,
+    country: nil,
+    country_code: nil,
+    ip_address: nil,
+    latitude: nil,
+    longitude: nil,
+    mystery_value: nil
+  }
   def fixture(:dataset) do
     {:ok, dataset} = Services.create_dataset(@create_attrs)
     dataset
@@ -48,11 +55,11 @@ defmodule GeoLocationServiceWeb.DatasetControllerTest do
       conn = get(conn, Routes.dataset_path(conn, :show, id))
 
       assert %{
-               "id" => id,
-               "city" => "some city",
-               "country" => "some country",
-               "country_code" => "some country_code",
-               "ip_address" => "some ip_address",
+               "id" => ^id,
+               "city" => "New Neva City",
+               "country" => "Nicaragua",
+               "country_code" => "CC",
+               "ip_address" => "123.567.98.66",
                "latitude" => 120.5,
                "longitude" => 120.5,
                "mystery_value" => 42
@@ -75,14 +82,14 @@ defmodule GeoLocationServiceWeb.DatasetControllerTest do
       conn = get(conn, Routes.dataset_path(conn, :show, id))
 
       assert %{
-               "id" => id,
-               "city" => "some updated city",
-               "country" => "some updated country",
-               "country_code" => "some updated country_code",
-               "ip_address" => "some updated ip_address",
-               "latitude" => 456.7,
-               "longitude" => 456.7,
-               "mystery_value" => 43
+               "id" => ^id,
+               "city" => "New Neva",
+               "country" => "Nicaragua",
+               "country_code" => "CZ",
+               "ip_address" => "123.567.98.11",
+               "latitude" => -68.31023296602508,
+               "longitude" => -37.62435199624531,
+               "mystery_value" => 7_301_823_115
              } = json_response(conn, 200)["data"]
     end
 

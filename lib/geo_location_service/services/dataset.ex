@@ -48,6 +48,8 @@ defmodule GeoLocationService.Services.Dataset do
       else
         add_error(changeset, :ip_address, "Not a valid ip address")
       end
+    else
+      changeset
     end
   end
 end

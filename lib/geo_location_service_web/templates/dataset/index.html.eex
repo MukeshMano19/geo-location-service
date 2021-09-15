@@ -1,4 +1,5 @@
 <%= if @search_term not in [nil, ""] do %>
+<h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
 <h3>Search result for <strong><%= @search_term %></strong></h3>
 <% end %>
 
