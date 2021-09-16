@@ -1,4 +1,4 @@
-defmodule GeoLocationService.FileLoader do
+defmodule GeoLocationService.Services.FileLoader do
   @moduledoc """
   The Services context.
   """
@@ -29,17 +29,25 @@ defmodule GeoLocationService.FileLoader do
       discarded: get_sum(results, :discarded)
     }
 
-    IO.inspect(statistics, label: "Statistics")
+    # IO.inspect(statistics, label: "Statistics")
 
-    statistics
+    {:ok, statistics}
   end
 
-  def start_import(file) do
+  defp start_import(file) do
     File.stream!(file)
     |> get_records_as_map
+    |> Enum.chunk_every(@batch_size)
     |> Enum.reduce([], fn batch, acc ->
-      result = dump_data_to_db(batch)
-      acc ++ [result]
+      {:ok, transactions} = dump_data_to_db(batch)
+      total = length(batch)
+
+      # Eventhough Repo.transaction handled unique constrains, still it'll returns response including dublicates.
+      # In order to count the exact count which reflected on the table we used Enum.uniq options to get the exact count. 
+      accepted = Enum.uniq_by(transactions, fn {_, v} -> v.ip_address end) |> length
+      discarded = total - accepted
+
+      acc ++ [%{total: total, accepted: accepted, discarded: discarded}]
     end)
   end
 
@@ -52,11 +60,10 @@ defmodule GeoLocationService.FileLoader do
       [%Dataset{}, ...]
 
   """
-  defp get_records_as_map(content) do
+  def get_records_as_map(content) do
     {header, data_lines} = get_header_and_data(content)
 
     Enum.map(data_lines, fn data_line -> Enum.zip(header, data_line) |> Enum.into(%{}) end)
-    |> Enum.chunk_every(@batch_size)
   end
 
   @doc """
@@ -69,7 +76,7 @@ defmodule GeoLocationService.FileLoader do
 
   """
 
-  defp get_header_and_data(content) do
+  def get_header_and_data(content) do
     content_lines =
       content
       |> Stream.map(&String.trim(&1))
@@ -81,34 +88,25 @@ defmodule GeoLocationService.FileLoader do
     {header, data_lines}
   end
 
-  defp dump_data_to_db(datasets) do
-    {:ok, transactions} =
-      datasets
-      |> Enum.with_index()
-      |> Enum.reduce(Ecto.Multi.new(), fn {set, idx}, multi ->
-        case %Dataset{} |> Dataset.changeset(parse_data(set)) do
-          %{valid?: true} = changeset ->
-            Ecto.Multi.insert(multi, {:insert, idx}, changeset,
-              on_conflict: :replace_all,
-              conflict_target: :ip_address
-            )
+  def dump_data_to_db(datasets) do
+    datasets
+    |> Enum.with_index()
+    |> Enum.reduce(Ecto.Multi.new(), fn {set, idx}, multi ->
+      case %Dataset{} |> Dataset.changeset(parse_data(set)) do
+        %{valid?: true} = changeset ->
+          Ecto.Multi.insert(multi, {:insert, idx}, changeset,
+            on_conflict: :replace_all,
+            conflict_target: :ip_address
+          )
 
-          _ ->
-            multi
-        end
-      end)
-      |> Repo.transaction()
-
-    total = length(datasets)
-    # Eventhough Repo.transaction handled unique constrains, still it'll returns response including dublicates.
-    # In order to count the exact count which reflected on the table we used Enum.uniq options to get the exact count. 
-    accepted = Enum.uniq_by(transactions, fn {_, v} -> v.ip_address end) |> length
-    discarded = total - accepted
-
-    %{total: total, accepted: accepted, discarded: discarded}
+        _ ->
+          multi
+      end
+    end)
+    |> Repo.transaction()
   end
 
-  defp parse_data(map) do
+  def parse_data(map) do
     [{"latitude", Float}, {"longitude", Float}, {"mystery_value", Integer}]
     |> Enum.reduce(map, fn {field, type}, acc ->
       case type.parse(map[field]) do
