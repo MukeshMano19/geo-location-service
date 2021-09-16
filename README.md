@@ -1,18 +1,72 @@
-# GeoLocationService
+# Geolocation Service
 
-To start your Phoenix server:
+Geolocation Service is an application which provides service to find particular location data using IP Address.
+## Get Started
+To use this application need to be installed on your machine.
+## Clone this repository
 
-  * Setup the project with `mix setup`
-  * Start Phoenix endpoint with `mix phx.server`
+Change project-name to your projects name.
+
+```bash
+> git clone https://github.com/MukeshMano19/geo-location-service.git <project-name>
+> cd <project-name>
+```
+
+There are two options to run this application
+
+  * Dockerized Method
+  * Non-Dockerized Method
+<br><br>
+
+### Dockerized Method
+
+To learn more about Docker, see [Docker Documentation page](https://docs.docker.com/get-started/).
+
+To download Docker, see [Docker Documentation page](https://docs.docker.com/get-started/).
+
+We want our app to be as light as it can be, so we are going to use Elixir/Phoenix and Postgres as s containers.
+
+To start your Phoenix server using Docker,
+
+```bash
+> docker-compose build
+> docker-compose up
+```
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+To start a docker container as daemon process,
 
-## Learn more
+```bash
+> docker-compose up -d
+```
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+To kill one or more running containers,
+
+```bash
+> docker-compose kill -s SIGINT
+```
+<br>
+
+### Non Dockerized Method
+
+Change database hostname to `localhost` to access the local postgresql database.
+
+```
+in /config/dev.exs
+
+config :geo_location_service, GeoLocationService.Repo,
+  ....
+  hostname: "localhost", 
+  ....
+```
+
+To setup the project and start phoenix endpoind,
+
+```bash
+> mix setup
+> mix phx.server
+```
+
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
