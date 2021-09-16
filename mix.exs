@@ -10,7 +10,11 @@ defmodule GeoLocationService.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      docs: [
+        main: "readme",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -45,6 +49,7 @@ defmodule GeoLocationService.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
+      {:ex_doc, "~> 0.25.2"},
       # For Table pagination
       {:scrivener_ecto, "~> 2.7"}
     ]

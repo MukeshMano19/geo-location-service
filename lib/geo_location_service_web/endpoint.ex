@@ -1,4 +1,5 @@
 defmodule GeoLocationServiceWeb.Endpoint do
+  @moduledoc false
   use Phoenix.Endpoint, otp_app: :geo_location_service
 
   # The session will be stored in the cookie and signed,

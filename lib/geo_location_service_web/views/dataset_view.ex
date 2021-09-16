@@ -1,4 +1,5 @@
 defmodule GeoLocationServiceWeb.DatasetView do
+  @moduledoc false
   use GeoLocationServiceWeb, :view
   alias GeoLocationServiceWeb.DatasetView
 

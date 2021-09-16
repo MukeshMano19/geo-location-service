@@ -1,4 +1,5 @@
 defmodule GeoLocationServiceWeb.ErrorView do
+  @moduledoc false
   use GeoLocationServiceWeb, :view
 
   # If you want to customize a particular status code

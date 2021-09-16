@@ -1,4 +1,5 @@
 defmodule GeoLocationServiceWeb.ChangesetView do
+  @moduledoc false
   use GeoLocationServiceWeb, :view
 
   @doc """

@@ -14,10 +14,12 @@ Change project-name to your projects name.
 > cd <project-name>
 ```
 
+## Project Setup
+
 There are two options to run this application
 
   * Dockerized Method
-  * Non-Dockerized Method
+  * Non-Dockerized Method (Default)
 
 ### Dockerized Method
 
@@ -89,4 +91,12 @@ To build and start docker container as daemon process,
   * Elixir Release: https://hexdocs.pm/phoenix/releases.html
   * Docs: https://hexdocs.pm/phoenix
 
+## Accessing the endpoints
+
+To get geo location by ip address.
+
+```bash
+> curl http://localhost:4000/api/geo_locations/200.106.141.15
+> {"data":{"city":"DuBuquemouth","country":"Nepal","country_code":"SI","id":1,"ip_address":"200.106.141.15",    "latitude":-84.87503094689836,"longitude":7.206435933364332,"mystery_value":7823011346}}
+```
 

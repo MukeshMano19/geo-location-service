@@ -1,10 +1,18 @@
 defmodule GeoLocationServiceWeb.DatasetController do
+  @moduledoc """
+    Endpoints for accessing data from datasets table
+  """
   use GeoLocationServiceWeb, :controller
 
   alias GeoLocationService.{Services, Repo}
   alias GeoLocationService.Services.Dataset
   action_fallback GeoLocationServiceWeb.FallbackController
 
+  @doc """
+    List all datasets in the datasets table
+
+    GET /api/datasets
+  """
   def index(conn, _params) do
     datasets = Services.list_datasets()
     render(conn, "index.json", datasets: datasets)

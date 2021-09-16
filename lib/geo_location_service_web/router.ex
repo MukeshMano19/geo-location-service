@@ -1,4 +1,5 @@
 defmodule GeoLocationServiceWeb.Router do
+  @moduledoc false
   use GeoLocationServiceWeb, :router
 
   pipeline :browser do
