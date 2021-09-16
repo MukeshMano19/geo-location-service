@@ -15,14 +15,6 @@
             <header>
               <h1>FindHotel - Geo Location Service</h1>
             </header>
-          <div>
-            <%= form_for @conn, Routes.dataset_path(@conn, :page_index), [method: :get, class: "pull-center"], fn f -> %>
-            <div class="search-form">
-              <%= search_input f, :ip_address, placeholder: "Search by IP Address ..." %>
-              <%= submit "Search" %>
-            </div>
-            <% end %>
-          </div>
 
           <%= @inner_content %>
         </div>

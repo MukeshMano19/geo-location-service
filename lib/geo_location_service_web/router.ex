@@ -16,13 +16,12 @@ defmodule GeoLocationServiceWeb.Router do
   scope "/", GeoLocationServiceWeb do
     pipe_through :browser
 
-    get "/", DatasetController, :page_index
+    get "/", DatasetController, :home
   end
 
   scope "/api", GeoLocationServiceWeb do
     pipe_through :api
 
     get "/geo_locations/:ip_address", DatasetController, :get_dataset_by_ip
-    resources "/datasets", DatasetController, except: [:new, :edit]
   end
 end

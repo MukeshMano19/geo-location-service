@@ -1,6 +1,13 @@
+<div>
+  <%= form_for @conn, Routes.dataset_path(@conn, :home), [method: :get], fn f -> %>
+    <div class="search-form">
+        <%= search_input f, :ip_address, placeholder: "Search by IP Address ..." %>
+        <%= submit "Search" %>
+    </div>
+  <% end %>
+</div>
 <%= if @search_term not in [nil, ""] do %>
-<h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
-<h3>Search result for <strong><%= @search_term %></strong></h3>
+  <h3>Search result for <strong><%= @search_term %></strong></h3>
 <% end %>
 
 <%= if length(@datasets) > 0 do %>
@@ -35,11 +42,11 @@
 <%= if @page != nil do %>
   <div class="pagination">
     <%= if @page.page_number > 1 do %>
-      <%= link "<< Prev Page", to: Routes.dataset_path(@conn, :page_index, page: @page.page_number - 1) %> 
+      <%= link "<< Prev Page", to: Routes.dataset_path(@conn, :home, page: @page.page_number - 1) %> 
       <span style="padding: 0 8px">|</span>
     <% end %>
     <%= if @page.page_number < @page.total_pages do %>
-      <%= link "Next Page >>", to: Routes.dataset_path(@conn, :page_index, page: @page.page_number + 1) %>
+      <%= link "Next Page >>", to: Routes.dataset_path(@conn, :home, page: @page.page_number + 1) %>
     <% end %>
   </div>
 <% end %>

@@ -7,7 +7,7 @@ defmodule GeoLocationService.Services.FileLoader do
   alias GeoLocationService.Services.Dataset
 
   @file_path "data_files/datasets.csv"
-  @batch_size 25000
+  @batch_size 50000
 
   @doc """
   Returns the list of datasets.
