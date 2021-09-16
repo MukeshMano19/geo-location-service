@@ -2,7 +2,9 @@
 
 Geolocation Service is an application which provides service to find particular location data using IP Address.
 ## Get Started
+
 To use this application need to be installed on your machine.
+
 ## Clone this repository
 
 Change project-name to your projects name.
@@ -16,15 +18,14 @@ There are two options to run this application
 
   * Dockerized Method
   * Non-Dockerized Method
-<br><br>
 
 ### Dockerized Method
 
 To learn more about Docker, see [Docker Documentation page](https://docs.docker.com/get-started/).
 
-To download Docker, see [Docker Documentation page](https://docs.docker.com/get-started/).
+To download Docker, see [Docker Downloads page](https://docs.docker.com/get-started/).
 
-We want our app to be as light as it can be, so we are going to use Elixir/Phoenix and Postgres as s containers.
+We want our app to be as light as it can be, so we are going to use Elixir/Phoenix and Postgres as a containers.
 
 To start your Phoenix server using Docker,
 
@@ -46,7 +47,6 @@ To kill one or more running containers,
 ```bash
 > docker-compose kill -s SIGINT
 ```
-<br>
 
 ### Non Dockerized Method
 
@@ -69,4 +69,24 @@ To setup the project and start phoenix endpoind,
 ```
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+## To deploy in Production
+
+With Docker, deploying in production is pretty easy and exactly same as development.
+
+But, make sure the configuration and the credentials for the postgres database to connect and access.
+
+To build and start docker container as daemon process,
+
+```bash
+> docker-compose build
+> docker-compose up -d
+```
+
+### For Non Dockerized method, Learn more
+
+  * Phoenix Deployment: https://hexdocs.pm/phoenix/deployment.html
+  * Elixir Release: https://hexdocs.pm/phoenix/releases.html
+  * Docs: https://hexdocs.pm/phoenix
+
 
