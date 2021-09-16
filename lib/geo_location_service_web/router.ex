@@ -23,5 +23,6 @@ defmodule GeoLocationServiceWeb.Router do
     pipe_through :api
 
     get "/geo_locations/:ip_address", DatasetController, :get_dataset_by_ip
+    resources "/datasets", DatasetController, except: [:new, :edit]
   end
 end

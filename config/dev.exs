@@ -5,7 +5,7 @@ config :geo_location_service, GeoLocationService.Repo,
   username: "postgres",
   password: "postgres",
   database: "geo_location_service_dev",
-  hostname: "db", #IF you are using local postgres, use "localhost"
+  hostname: "localhost", #IF you are using local postgres, use "localhost"
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
   timeout: 240_000

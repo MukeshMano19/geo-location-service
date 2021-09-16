@@ -2,7 +2,7 @@ defmodule GeoLocationServiceWeb.DatasetController do
   use GeoLocationServiceWeb, :controller
 
   alias GeoLocationService.{Services, Repo}
-  alias GeoLocationService.Services.{Dataset, FileLoader}
+  alias GeoLocationService.Services.Dataset
   action_fallback GeoLocationServiceWeb.FallbackController
 
   def index(conn, _params) do
@@ -56,7 +56,7 @@ defmodule GeoLocationServiceWeb.DatasetController do
         render(conn, "index.html", datasets: page.entries, search_term: ip_address, page: page)
 
       _ ->
-        data = Services.get_dataset_by_ip(ip_address)
+        data = Services.get_dataset_by_ip(String.trim(ip_address))
         datasets = if data == nil, do: [], else: [data]
 
         render(conn, "index.html", datasets: datasets, search_term: ip_address, page: nil)
