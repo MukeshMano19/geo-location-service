@@ -3,6 +3,8 @@ defmodule GeoLocationService.Services.Dataset do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @valid_ip_regex ~r/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+
   schema "datasets" do
     field :city, :string
     field :country, :string
@@ -44,7 +46,7 @@ defmodule GeoLocationService.Services.Dataset do
     if changeset.valid? do
       ip = get_field(changeset, :ip_address)
 
-      if Regex.match?(~r{\A\d*\z}, String.replace(ip, ".", "")) do
+      if Regex.match?(@valid_ip_regex, ip) do
         changeset
       else
         add_error(changeset, :ip_address, "Not a valid ip address")
