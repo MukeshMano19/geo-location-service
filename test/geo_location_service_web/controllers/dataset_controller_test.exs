@@ -112,6 +112,33 @@ defmodule GeoLocationServiceWeb.DatasetControllerTest do
     end
   end
 
+  describe "Get dataset by IP Address" do
+    setup [:create_dataset]
+
+    test "renders dataset when ip address is valid", %{
+      conn: conn,
+      dataset: %Dataset{id: id, ip_address: ip}
+    } do
+      conn = get(conn, Routes.dataset_path(conn, :get_dataset_by_ip, ip))
+
+      assert %{
+               "id" => ^id,
+               "city" => "New Neva City",
+               "country" => "Nicaragua",
+               "country_code" => "CC",
+               "ip_address" => "123.567.98.66",
+               "latitude" => 120.5,
+               "longitude" => 120.5,
+               "mystery_value" => 42
+             } = json_response(conn, 200)["data"]
+    end
+
+    test "renders errors when data is invalid", %{conn: conn} do
+      conn = get(conn, Routes.dataset_path(conn, :get_dataset_by_ip, "0.0.0.0"))
+      assert "Not Found" = json_response(conn, 404)
+    end
+  end
+
   defp create_dataset(_) do
     dataset = fixture(:dataset)
     %{dataset: dataset}
