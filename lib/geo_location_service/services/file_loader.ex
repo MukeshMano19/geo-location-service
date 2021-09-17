@@ -7,7 +7,7 @@ defmodule GeoLocationService.Services.FileLoader do
   alias GeoLocationService.Services.Dataset
 
   @file_path "data_files/datasets.csv"
-  @batch_size 50000
+  @batch_size 25000
 
   @doc """
   Import the csv file and returns the statistics of the import status.
@@ -46,6 +46,10 @@ defmodule GeoLocationService.Services.FileLoader do
     |> Enum.chunk_every(@batch_size)
     |> Enum.reduce([], fn batch, acc ->
       {:ok, transactions} = dump_data_to_db(batch)
+
+      IO.inspect("Batch done, Waiting for next one ..")
+      Process.sleep(1000)
+
       total = length(batch)
 
       # Eventhough Repo.transaction handled unique constrains, still it'll returns response including dublicates.

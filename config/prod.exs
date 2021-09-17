@@ -8,7 +8,7 @@ config :geo_location_service, GeoLocationService.Repo,
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
-  timeout: 240_000,
+  ownership_timeout: 240000,
   pool: Ecto.Adapters.SQL.Sandbox
 
 # For production, don't forget to configure the url host
