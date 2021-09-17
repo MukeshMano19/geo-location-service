@@ -13,7 +13,7 @@ config :geo_location_service,
 # Configures the endpoint
 config :geo_location_service, GeoLocationServiceWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "3SSRZTee8KG4UC9NghYE//2xKpK+aiIECoKEoTT/Upx0r1qmxQqB74bW7ZZH1vlr",
+  secret_key_base: "CZtk08QapTpjkF31yrT1XYwNePLBulR/XH5HYL3OEkvHsSxMMxbtsCMCB1nh9arw",
   render_errors: [view: GeoLocationServiceWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: GeoLocationService.PubSub,
   live_view: [signing_salt: "9okByi5t"]

@@ -1,22 +1,54 @@
-# Use an official Elixir runtime as a parent image
-FROM elixir:latest
+# ./Dockerfile
 
-RUN apt-get update && \
-  apt-get install -y postgresql-client && \
-  apt-get install -y inotify-tools && \
-  mix local.hex --force && \
-  mix archive.install hex phx_new 1.5.12 --force && \
-  mix local.rebar --force
+# Extend from the official Elixir image
+FROM elixir:1.10.2-alpine
 
-# Create app directory and copy the Elixir projects into it
-RUN mkdir /app
-COPY . /app
-WORKDIR /app
 
-# Get project dependencies
-RUN mix deps.get
+# Install required libraries on Alpine
+# note: build-base required to run mix “make” for
+# one of my dependecies (bcrypt)
 
-# Compile the project
-RUN mix do compile
+RUN apk update && apk upgrade && \
+    apk add postgresql-client && \
+    apk add nodejs npm && \
+    apk add build-base && \
+    rm -rf /var/cache/apk/*
 
-CMD ["/app/entry-point.sh"]
+
+# Set environment to production
+ENV MIX_ENV prod
+
+
+# Install hex package manager and rebar
+# By using --force, we don’t need to type “Y” to confirm the installation
+RUN mix do local.hex --force, local.rebar --force
+
+
+# Cache elixir dependecies and lock file
+COPY mix.* ./
+
+
+# Install and compile production dependecies
+RUN mix do deps.get --only prod
+RUN mix deps.compile
+
+# Cache and install node packages and dependencies
+COPY assets/package.json assets/
+
+RUN cd assets && \
+    npm install
+
+# Copy all application files
+COPY . ./
+
+
+# Run frontend build, compile, and digest assets
+RUN cd assets/ && \
+    npm run deploy && \
+    cd - && \
+    mix do compile, phx.digest
+
+# Run entrypoint.sh script
+RUN chmod +x entrypoint.sh
+
+CMD ["/entrypoint.sh"]
