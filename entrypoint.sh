@@ -15,8 +15,5 @@ mix ecto.create
 # Runs migrations, will skip if migrations are up to date.
 mix ecto.migrate
 
-# Run Seeds.
-mix run priv/repo/seeds.exs
-
 # Start the server.
 exec mix phx.server

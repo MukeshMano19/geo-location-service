@@ -1,5 +1,16 @@
 use Mix.Config
 
+# Configure your database
+config :geo_location_service, GeoLocationService.Repo,
+  username: "postgres",
+  password: "postgres",
+  database: "geo_location_service",
+  hostname: "localhost",
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10,
+  timeout: 240_000,
+  pool: Ecto.Adapters.SQL.Sandbox
+
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
 # when generating URLs.
