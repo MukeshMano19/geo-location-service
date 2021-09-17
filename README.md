@@ -7,7 +7,7 @@ To use this application need to be installed on your machine.
 
 ## Clone this repository
 
-Change project-name to your projects name.
+Change project-name to your project name.
 
 ```bash
 > git clone https://github.com/MukeshMano19/geo-location-service.git <project-name>
@@ -66,11 +66,32 @@ config :geo_location_service, GeoLocationService.Repo,
 To setup the project and start phoenix endpoind,
 
 ```bash
+> mix deps.get
 > mix setup
 > mix phx.server
 ```
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+## Unit Testing
+
+Elixir’s built-in test framework is [ExUnit](https://hexdocs.pm/ex_unit/1.12/ExUnit.html) and it includes everything we need to thoroughly test our code.
+
+To learn more about test practisces, see [Elixir testing](https://elixirschool.com/en/lessons/basics/testing/) 
+
+```bash
+> mix test
+```
+
+## Documentation
+
+Documenting Elixir code.
+
+To learn more about documenting, see [Elixir testing](https://elixirschool.com/en/lessons/basics/documentation/) 
+
+```bash
+> mix docs
+```
 
 ## To deploy in Production
 

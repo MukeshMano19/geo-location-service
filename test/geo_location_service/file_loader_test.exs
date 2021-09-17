@@ -24,13 +24,13 @@ defmodule GeoLocationService.FileLoaderTest do
     end
 
     test "get_header_and_data/1 with file path to read the csv file and returns header and datasets separately" do
-      assert {header, datasets} = FileLoader.get_header_and_data(File.stream!(@test_file_path))
+      assert {header, datasets} = FileLoader.get_header_and_data(@test_file_path)
       assert length(header) == 7
       assert is_list(datasets) == true
     end
 
     test "get_records_as_map/1 with file path to read the csv file and returns header and datasets separately" do
-      list_of_maps = FileLoader.get_records_as_map(File.stream!(@test_file_path))
+      list_of_maps = FileLoader.get_records_as_map(@test_file_path)
       assert hd(list_of_maps) |> is_map == true
     end
 
@@ -45,7 +45,7 @@ defmodule GeoLocationService.FileLoaderTest do
     end
 
     test "dump_data_to_db/1 with list of data to do the transactions and returns transaction result" do
-      list_of_maps = FileLoader.get_records_as_map(File.stream!(@test_file_path))
+      list_of_maps = FileLoader.get_records_as_map(@test_file_path)
       assert {:ok, transactions} = FileLoader.dump_data_to_db(list_of_maps)
       assert {_key, %Dataset{}} = Enum.random(transactions)
     end

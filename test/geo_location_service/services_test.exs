@@ -10,7 +10,7 @@ defmodule GeoLocationService.ServicesTest do
       city: "New Neva City",
       country: "Nicaragua",
       country_code: "CC",
-      ip_address: "123.567.98.66",
+      ip_address: "123.56.98.66",
       latitude: 120.5,
       longitude: 120.5,
       mystery_value: 42
@@ -19,7 +19,7 @@ defmodule GeoLocationService.ServicesTest do
       city: "New Neva",
       country: "Nicaragua",
       country_code: "CZ",
-      ip_address: "123.567.98.11",
+      ip_address: "123.56.98.11",
       latitude: -68.31023296602508,
       longitude: -37.62435199624531,
       mystery_value: 7_301_823_115
@@ -58,7 +58,7 @@ defmodule GeoLocationService.ServicesTest do
       assert dataset.city == "New Neva City"
       assert dataset.country == "Nicaragua"
       assert dataset.country_code == "CC"
-      assert dataset.ip_address == "123.567.98.66"
+      assert dataset.ip_address == "123.56.98.66"
       assert dataset.latitude == 120.5
       assert dataset.longitude == 120.5
       assert dataset.mystery_value == 42
@@ -68,13 +68,18 @@ defmodule GeoLocationService.ServicesTest do
       assert {:error, %Ecto.Changeset{}} = Services.create_dataset(@invalid_attrs)
     end
 
+    test "create_dataset/1 with invalid ip address returns error changeset" do
+      updated_attrs = Map.put(@valid_attrs, :ip_address, "666.45.687.56")
+      assert {:error, %Ecto.Changeset{}} = Services.create_dataset(updated_attrs)
+    end
+
     test "update_dataset/2 with valid data updates the dataset" do
       dataset = dataset_fixture()
       assert {:ok, %Dataset{} = dataset} = Services.update_dataset(dataset, @update_attrs)
       assert dataset.city == "New Neva"
       assert dataset.country == "Nicaragua"
       assert dataset.country_code == "CZ"
-      assert dataset.ip_address == "123.567.98.11"
+      assert dataset.ip_address == "123.56.98.11"
       assert dataset.latitude == -68.31023296602508
       assert dataset.longitude == -37.62435199624531
       assert dataset.mystery_value == 7_301_823_115

@@ -1,6 +1,6 @@
 defmodule GeoLocationService.Services do
   @moduledoc """
-  The Services context.
+  The Services context. This module has functionalities to access datasets. 
   """
 
   import Ecto.Query, warn: false

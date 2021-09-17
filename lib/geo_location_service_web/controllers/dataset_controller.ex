@@ -13,7 +13,8 @@ defmodule GeoLocationServiceWeb.DatasetController do
 
   ## Examples
 
-    > curl http://localhost:4000/api/datasets
+      curl http://localhost:4000/api/datasets
+
   """
   def index(conn, _params) do
     datasets = Services.list_datasets()
@@ -25,7 +26,8 @@ defmodule GeoLocationServiceWeb.DatasetController do
 
   ## Examples
 
-    > curl -H "Content-Type: application/json" -X POST -d '{"ip_address":"123.56.34.8","city":"ABC","country":"China","country_code":"XC","latitude":"-455.67","longitude":"34.567","mystery_value":"34534534"}' http://localhost:8080/api/login/
+      curl -H "Content-Type: application/json" -X POST -d '{"ip_address":"123.56.34.8","city":"ABC","country":"China","country_code":"XC","latitude":"-455.67","longitude":"34.567","mystery_value":"34534534"}' http://localhost:8080/api/login/
+
   """
   def create(conn, %{"dataset" => dataset_params}) do
     with {:ok, %Dataset{} = dataset} <- Services.create_dataset(dataset_params) do
@@ -41,8 +43,9 @@ defmodule GeoLocationServiceWeb.DatasetController do
 
   ## Examples
 
-    > curl http://localhost:4000/api/datasets/100
-    > {"data":{"city":"DuBuquemouth","country":"Nepal","country_code":"SI","id":1,"ip_address":"200.106.141.15",    "latitude":-84.87503094689836,"longitude":7.206435933364332,"mystery_value":7823011346}}
+      curl http://localhost:4000/api/datasets/100
+      {"data":{"city":"DuBuquemouth","country":"Nepal","country_code":"SI","id":1,"ip_address":"200.106.141.15",    "latitude":-84.87503094689836,"longitude":7.206435933364332,"mystery_value":7823011346}}
+
   """
   def show(conn, %{"id" => id}) do
     dataset = Services.get_dataset!(String.to_integer(id))
@@ -50,11 +53,12 @@ defmodule GeoLocationServiceWeb.DatasetController do
   end
 
   @doc """
-  Create a dataset
+  Update a dataset
 
   ## Examples
 
-    > curl -H "Content-Type: application/json" -X PUT -d '{"ip_address":"123.56.34.8","city":"ABC","country":"China","country_code":"XC","latitude":"-455.67","longitude":"34.567","mystery_value":"34534534"}' http://localhost:8080/api/login/
+      curl -H "Content-Type: application/json" -X PUT -d '{"ip_address":"123.56.34.8","city":"ABC","country":"China","country_code":"XC","latitude":"-455.67","longitude":"34.567","mystery_value":"34534534"}' http://localhost:8080/api/login/
+  
   """
   def update(conn, %{"id" => id, "dataset" => dataset_params}) do
     dataset = Services.get_dataset!(id)
@@ -65,11 +69,12 @@ defmodule GeoLocationServiceWeb.DatasetController do
   end
 
   @doc """
-  Create a dataset
+  Delete a dataset
 
   ## Examples
 
-    > curl -X "DELETE" http://localhost:4000/api/datasets/77230
+      curl -X "DELETE" http://localhost:4000/api/datasets/77230
+
   """
   def delete(conn, %{"id" => id}) do
     dataset = Services.get_dataset!(id)
@@ -84,8 +89,9 @@ defmodule GeoLocationServiceWeb.DatasetController do
 
   ## Examples
 
-    > http://localhost:4000/api/geo_locations/200.106.141.15
-    > {"data":{"city":"DuBuquemouth","country":"Nepal","country_code":"SI","id":1,"ip_address":"200.106.141.15",    "latitude":-84.87503094689836,"longitude":7.206435933364332,"mystery_value":7823011346}}
+      curn http://localhost:4000/api/geo_locations/200.106.141.15
+      {"data":{"city":"DuBuquemouth","country":"Nepal","country_code":"SI","id":1,"ip_address":"200.106.141.15",    "latitude":-84.87503094689836,"longitude":7.206435933364332,"mystery_value":7823011346}}
+
   """
   def get_dataset_by_ip(conn, %{"ip_address" => ip_address}) do
     case Services.get_dataset_by_ip(String.trim(ip_address)) do
@@ -94,6 +100,7 @@ defmodule GeoLocationServiceWeb.DatasetController do
     end
   end
 
+  @doc false
   def home(conn, params) do
     ip_address = get_in(params, ["ip_address"])
 

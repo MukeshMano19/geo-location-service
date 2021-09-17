@@ -1,6 +1,6 @@
 defmodule GeoLocationService.Services.FileLoader do
   @moduledoc """
-  The Services context.
+    The Fileloader module helps to import the csv file.
   """
 
   alias GeoLocationService.Repo
@@ -10,15 +10,19 @@ defmodule GeoLocationService.Services.FileLoader do
   @batch_size 50000
 
   @doc """
-  Returns the list of datasets.
+  Import the csv file and returns the statistics of the import status.
 
   ## Examples
-
-      iex> list_datasets()
-      [%Dataset{}, ...]
+      
+      iex> sync_data("data_files/datasets.csv")
+      Statistics: %{
+        time_taken: 12.56,
+        total_entries: 100,
+        accepted: 70,
+        discarded: 30
+      }
 
   """
-
   def sync_data(file \\ @file_path) do
     {micro_seconds, results} = :timer.tc(fn -> start_import(file) end)
 
@@ -29,14 +33,14 @@ defmodule GeoLocationService.Services.FileLoader do
       discarded: get_sum(results, :discarded)
     }
 
-    # IO.inspect(statistics, label: "Statistics")
+    IO.inspect(statistics, label: "Statistics")
 
     {:ok, statistics}
   end
 
+  @doc false
   defp start_import(file) do
-    File.stream!(file)
-    |> get_records_as_map
+    get_records_as_map(file)
     |> Enum.chunk_every(@batch_size)
     |> Enum.reduce([], fn batch, acc ->
       {:ok, transactions} = dump_data_to_db(batch)
@@ -52,33 +56,32 @@ defmodule GeoLocationService.Services.FileLoader do
   end
 
   @doc """
-  Returns the list of datasets.
+  Parse csv file and returns csv records as map.
 
   ## Examples
 
-      iex> list_datasets()
-      [%Dataset{}, ...]
+      iex> get_records_as_map("data_files/datasets.csv")
+      [%{"ip_address" => "12.56.34.6", "city" => "ooty", ...}, ...]
 
   """
-  def get_records_as_map(content) do
-    {header, data_lines} = get_header_and_data(content)
+  def get_records_as_map(file) do
+    {header, data_lines} = get_header_and_data(file)
 
     Enum.map(data_lines, fn data_line -> Enum.zip(header, data_line) |> Enum.into(%{}) end)
   end
 
   @doc """
-  Returns the list of datasets.
+  Parse csv file and returns header and data lines separately.
 
   ## Examples
 
-      iex> list_datasets()
-      [%Dataset{}, ...]
+      iex> get_header_and_data("data_files/datasets.csv")
+      {["ip_address", "city", "country", ...], ["123, 45, 56,3", "ooty", "india", .., ....]}
 
   """
-
-  def get_header_and_data(content) do
+  def get_header_and_data(file) do
     content_lines =
-      content
+      File.stream!(file)
       |> Stream.map(&String.trim(&1))
       |> Stream.filter(&(String.length(&1) != 0))
       |> Stream.map(&String.split(&1, ","))
@@ -88,6 +91,32 @@ defmodule GeoLocationService.Services.FileLoader do
     {header, data_lines}
   end
 
+  @doc """
+  Insert list of valid datasets and returns success Repo.transaction response.
+  Invalid records are discarded.
+
+  ## Examples
+
+      iex> datasets = [%{"ip_address" => "234.54.7.34", "city" => "ooty", "country" => "India", "country_code" => "IN", "latitude" => "123.456", "longitude" => "-44.532", "mystery_value" => "23234342"}, ...]  
+      iex> dump_data_to_db(datasets)
+      {:ok,                                                     
+        %{                                                       
+          {:insert, 0} => %GeoLocationService.Services.Dataset{  
+            __meta__: #Ecto.Schema.Metadata<:loaded, "datasets">,
+            city: "ooty",                                        
+            country: "India",                                    
+            country_code: "IN",                                  
+            id: 96564,                                           
+            inserted_at: ~N[2021-09-17 04:58:59],                
+            ip_address: "234.54.7.34",                           
+            latitude: 123.456,                                   
+            longitude: -44.532,                                  
+            mystery_value: 23234342,                             
+            updated_at: ~N[2021-09-17 04:58:59]                  
+        },
+        ...                                                      
+      }}                                                       
+  """
   def dump_data_to_db(datasets) do
     datasets
     |> Enum.with_index()
@@ -106,6 +135,17 @@ defmodule GeoLocationService.Services.FileLoader do
     |> Repo.transaction()
   end
 
+  @doc """
+  Parse the map and returns the converted field values of map.
+  Latitude, langitude and mystery_value field values are converted from string to respective formate.  
+
+  ## Examples
+
+      iex> dataset = %{"ip_address" => "234.54.7.34", "city" => "ooty", "country" => "India", "country_code" => "IN", "latitude" => "123.456", "longitude" => "-44.532", "mystery_value" => "23234342"}
+      iex> parse_data(dataset)
+      %{"ip_address" => "234.54.7.34", "city" => "ooty", "country" => "India", "country_code" => "IN", "latitude" => 123.456, "longitude" => -44.532, "mystery_value" => 23234342}
+
+  """
   def parse_data(map) do
     [{"latitude", Float}, {"longitude", Float}, {"mystery_value", Integer}]
     |> Enum.reduce(map, fn {field, type}, acc ->
@@ -116,5 +156,6 @@ defmodule GeoLocationService.Services.FileLoader do
     end)
   end
 
+  @doc false
   defp get_sum(entries, key), do: Enum.map(entries, &Map.get(&1, key, 0)) |> Enum.sum()
 end

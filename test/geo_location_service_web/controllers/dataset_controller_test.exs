@@ -8,7 +8,7 @@ defmodule GeoLocationServiceWeb.DatasetControllerTest do
     city: "New Neva City",
     country: "Nicaragua",
     country_code: "CC",
-    ip_address: "123.567.98.66",
+    ip_address: "123.56.98.66",
     latitude: 120.5,
     longitude: 120.5,
     mystery_value: 42
@@ -17,7 +17,7 @@ defmodule GeoLocationServiceWeb.DatasetControllerTest do
     city: "New Neva",
     country: "Nicaragua",
     country_code: "CZ",
-    ip_address: "123.567.98.11",
+    ip_address: "123.56.98.11",
     latitude: -68.31023296602508,
     longitude: -37.62435199624531,
     mystery_value: 7_301_823_115
@@ -59,7 +59,7 @@ defmodule GeoLocationServiceWeb.DatasetControllerTest do
                "city" => "New Neva City",
                "country" => "Nicaragua",
                "country_code" => "CC",
-               "ip_address" => "123.567.98.66",
+               "ip_address" => "123.56.98.66",
                "latitude" => 120.5,
                "longitude" => 120.5,
                "mystery_value" => 42
@@ -86,7 +86,7 @@ defmodule GeoLocationServiceWeb.DatasetControllerTest do
                "city" => "New Neva",
                "country" => "Nicaragua",
                "country_code" => "CZ",
-               "ip_address" => "123.567.98.11",
+               "ip_address" => "123.56.98.11",
                "latitude" => -68.31023296602508,
                "longitude" => -37.62435199624531,
                "mystery_value" => 7_301_823_115
@@ -126,7 +126,7 @@ defmodule GeoLocationServiceWeb.DatasetControllerTest do
                "city" => "New Neva City",
                "country" => "Nicaragua",
                "country_code" => "CC",
-               "ip_address" => "123.567.98.66",
+               "ip_address" => "123.56.98.66",
                "latitude" => 120.5,
                "longitude" => 120.5,
                "mystery_value" => 42
