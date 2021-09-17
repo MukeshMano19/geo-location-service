@@ -23,6 +23,7 @@ defmodule GeoLocationService.Services.FileLoader do
       }
 
   """
+  @spec sync_data(String.t()) :: {:ok, map}
   def sync_data(file \\ @file_path) do
     {micro_seconds, results} = :timer.tc(fn -> start_import(file) end)
 
@@ -39,6 +40,7 @@ defmodule GeoLocationService.Services.FileLoader do
   end
 
   @doc false
+  @spec start_import(String.t()) :: list
   defp start_import(file) do
     get_records_as_map(file)
     |> Enum.chunk_every(@batch_size)
@@ -64,6 +66,7 @@ defmodule GeoLocationService.Services.FileLoader do
       [%{"ip_address" => "12.56.34.6", "city" => "ooty", ...}, ...]
 
   """
+  @spec get_records_as_map(String.t()) :: map
   def get_records_as_map(file) do
     {header, data_lines} = get_header_and_data(file)
 
@@ -79,6 +82,7 @@ defmodule GeoLocationService.Services.FileLoader do
       {["ip_address", "city", "country", ...], ["123, 45, 56,3", "ooty", "india", .., ....]}
 
   """
+  @spec get_header_and_data(String.t()) :: {list, list}
   def get_header_and_data(file) do
     content_lines =
       File.stream!(file)
@@ -117,6 +121,7 @@ defmodule GeoLocationService.Services.FileLoader do
         ...                                                      
       }}                                                       
   """
+  @spec dump_data_to_db(list) :: {:ok, map}
   def dump_data_to_db(datasets) do
     datasets
     |> Enum.with_index()
@@ -146,6 +151,7 @@ defmodule GeoLocationService.Services.FileLoader do
       %{"ip_address" => "234.54.7.34", "city" => "ooty", "country" => "India", "country_code" => "IN", "latitude" => 123.456, "longitude" => -44.532, "mystery_value" => 23234342}
 
   """
+  @spec parse_data(%{required(String.t()) => String.t()}) :: map
   def parse_data(map) do
     [{"latitude", Float}, {"longitude", Float}, {"mystery_value", Integer}]
     |> Enum.reduce(map, fn {field, type}, acc ->
@@ -157,5 +163,6 @@ defmodule GeoLocationService.Services.FileLoader do
   end
 
   @doc false
+  @spec get_sum(list, String.t()) :: integer
   defp get_sum(entries, key), do: Enum.map(entries, &Map.get(&1, key, 0)) |> Enum.sum()
 end
