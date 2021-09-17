@@ -13,6 +13,9 @@ WORKDIR /app
 RUN mix local.hex --force
 
 # Compile the project
+RUN mix deps.get
+
+# Compile the project
 RUN mix do compile
 
 CMD ["/app/entry-point.sh"]
