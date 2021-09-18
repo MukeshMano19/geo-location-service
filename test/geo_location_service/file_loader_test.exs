@@ -8,7 +8,7 @@ defmodule GeoLocationService.FileLoaderTest do
     "city" => "New Neva",
     "country" => "Nicaragua",
     "country_code" => "CZ",
-    "ip_address" => "123.567.98.11",
+    "ip_address" => "123.67.98.11",
     "latitude" => "-68.31023296602508",
     "longitude" => "-37.62435199624531",
     "mystery_value" => "7301823115"

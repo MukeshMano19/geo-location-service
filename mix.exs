@@ -50,6 +50,7 @@ defmodule GeoLocationService.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:ex_doc, "~> 0.25.2"},
+      {:quantum, "~> 3.0"},
       # For Table pagination
       {:scrivener_ecto, "~> 2.7"}
     ]

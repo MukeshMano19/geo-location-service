@@ -14,9 +14,10 @@ defmodule GeoLocationService.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: GeoLocationService.PubSub},
       # Start the Endpoint (http/https)
-      GeoLocationServiceWeb.Endpoint
+      GeoLocationServiceWeb.Endpoint,
       # Start a worker by calling: GeoLocationService.Worker.start_link(arg)
       # {GeoLocationService.Worker, arg}
+      GeoLocationService.Scheduler
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

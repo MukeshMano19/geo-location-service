@@ -6,12 +6,12 @@ defmodule GeoLocationService.Services.FileLoader do
   alias GeoLocationService.Repo
   alias GeoLocationService.Services.Dataset
 
-  @file_path "data_files/datasets.csv"
+  @file_path "data_files/test-datasets.csv"
   @batch_size 25000
 
   @doc """
   Import the csv file and returns the statistics of the import status.
-
+  
   ## Examples
       
       iex> sync_data("data_files/datasets.csv")
@@ -21,20 +21,18 @@ defmodule GeoLocationService.Services.FileLoader do
         accepted: 70,
         discarded: 30
       }
-
+  
   """
   @spec sync_data(String.t()) :: {:ok, map}
   def sync_data(file \\ @file_path) do
-    {micro_seconds, results} = :timer.tc(fn -> start_import(file) end)
+    {micro_seconds, {processed, accepted, discarded}} = :timer.tc(fn -> start_import(file) end)
 
     statistics = %{
       time_taken: micro_seconds / 1_000_000,
-      total_entries: get_sum(results, :total),
-      accepted: get_sum(results, :accepted),
-      discarded: get_sum(results, :discarded)
+      total_entries: processed,
+      accepted: accepted,
+      discarded: discarded
     }
-
-    IO.inspect(statistics, label: "Statistics")
 
     {:ok, statistics}
   end
@@ -44,31 +42,27 @@ defmodule GeoLocationService.Services.FileLoader do
   defp start_import(file) do
     get_records_as_map(file)
     |> Enum.chunk_every(@batch_size)
-    |> Enum.reduce([], fn batch, acc ->
+    |> Enum.reduce({0, 0, 0}, fn batch, {processed, accepted, discarded} ->
       {:ok, transactions} = dump_data_to_db(batch)
-
-      IO.inspect("Batch done, Waiting for next one ..")
-      Process.sleep(1000)
-
       total = length(batch)
 
       # Eventhough Repo.transaction handled unique constrains, still it'll returns response including dublicates.
       # In order to count the exact count which reflected on the table we used Enum.uniq options to get the exact count. 
-      accepted = Enum.uniq_by(transactions, fn {_, v} -> v.ip_address end) |> length
-      discarded = total - accepted
+      success = Enum.uniq_by(transactions, fn {_, v} -> v.ip_address end) |> length
+      filure = total - success
 
-      acc ++ [%{total: total, accepted: accepted, discarded: discarded}]
+      {processed + total, accepted + success, discarded + filure}
     end)
   end
 
   @doc """
   Parse csv file and returns csv records as map.
-
+  
   ## Examples
-
+  
       iex> get_records_as_map("data_files/datasets.csv")
       [%{"ip_address" => "12.56.34.6", "city" => "ooty", ...}, ...]
-
+  
   """
   @spec get_records_as_map(String.t()) :: map
   def get_records_as_map(file) do
@@ -79,12 +73,12 @@ defmodule GeoLocationService.Services.FileLoader do
 
   @doc """
   Parse csv file and returns header and data lines separately.
-
+  
   ## Examples
-
+  
       iex> get_header_and_data("data_files/datasets.csv")
       {["ip_address", "city", "country", ...], ["123, 45, 56,3", "ooty", "india", .., ....]}
-
+  
   """
   @spec get_header_and_data(String.t()) :: {list, list}
   def get_header_and_data(file) do
@@ -102,9 +96,9 @@ defmodule GeoLocationService.Services.FileLoader do
   @doc """
   Insert list of valid datasets and returns success Repo.transaction response.
   Invalid records are discarded.
-
+  
   ## Examples
-
+  
       iex> datasets = [%{"ip_address" => "234.54.7.34", "city" => "ooty", "country" => "India", "country_code" => "IN", "latitude" => "123.456", "longitude" => "-44.532", "mystery_value" => "23234342"}, ...]  
       iex> dump_data_to_db(datasets)
       {:ok,                                                     
@@ -147,13 +141,13 @@ defmodule GeoLocationService.Services.FileLoader do
   @doc """
   Parse the map and returns the converted field values of map.
   Latitude, langitude and mystery_value field values are converted from string to respective formate.  
-
+  
   ## Examples
-
+  
       iex> dataset = %{"ip_address" => "234.54.7.34", "city" => "ooty", "country" => "India", "country_code" => "IN", "latitude" => "123.456", "longitude" => "-44.532", "mystery_value" => "23234342"}
       iex> parse_data(dataset)
       %{"ip_address" => "234.54.7.34", "city" => "ooty", "country" => "India", "country_code" => "IN", "latitude" => 123.456, "longitude" => -44.532, "mystery_value" => 23234342}
-
+  
   """
   @spec parse_data(%{required(String.t()) => String.t()}) :: map
   def parse_data(map) do
@@ -165,8 +159,4 @@ defmodule GeoLocationService.Services.FileLoader do
       end
     end)
   end
-
-  @doc false
-  @spec get_sum(list, String.t()) :: integer
-  defp get_sum(entries, key), do: Enum.map(entries, &Map.get(&1, key, 0)) |> Enum.sum()
 end

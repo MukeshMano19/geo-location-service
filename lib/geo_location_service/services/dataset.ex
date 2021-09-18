@@ -14,7 +14,7 @@ defmodule GeoLocationService.Services.Dataset do
     field :longitude, :float
     field :mystery_value, :integer
 
-    timestamps()
+    # timestamps()
   end
 
   @doc false

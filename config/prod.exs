@@ -8,7 +8,7 @@ config :geo_location_service, GeoLocationService.Repo,
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
-  ownership_timeout: 240000,
+  timeout: 240000,
   pool: Ecto.Adapters.SQL.Sandbox
 
 # For production, don't forget to configure the url host
@@ -27,6 +27,12 @@ config :geo_location_service, GeoLocationServiceWeb.Endpoint,
 
 # Do not print debug messages in production
 config :logger, level: :info
+
+config :geo_location_service, GeoLocationService.Scheduler,
+  jobs: [
+    # Every 15 minutes
+    {"*/15 * * * *", {GeoLocationService.Services.SchemalessFileLoader, :sync_data, []}}
+  ]
 
 # ## SSL Support
 #
