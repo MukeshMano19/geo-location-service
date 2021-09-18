@@ -17,9 +17,9 @@ defmodule GeoLocationService.FileLoaderTest do
   describe "Fill Loader" do
     test "sync_data/1 with file path to import csv file and save it to the database" do
       assert {:ok, statistics} = FileLoader.sync_data(@test_file_path)
-      assert statistics.total_entries == 54
-      assert statistics.accepted == 44
-      assert statistics.discarded == 10
+      assert statistics.total_entries == 1000
+      assert statistics.accepted == 863
+      assert statistics.discarded == 137
       assert statistics.time_taken != nil
     end
 

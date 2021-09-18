@@ -87,6 +87,8 @@ To learn more about test practisces, see [Elixir testing](https://elixirschool.c
 
 ```bash
 > mix test
+or
+> docker-compose run phoenix mix test
 ```
 
 ## Documentation
@@ -97,6 +99,8 @@ To learn more about documenting, see [Elixir testing](https://elixirschool.com/e
 
 ```bash
 > mix docs
+or
+> docker-compose run phoenix mix docs
 ```
 
 ## To deploy in Production

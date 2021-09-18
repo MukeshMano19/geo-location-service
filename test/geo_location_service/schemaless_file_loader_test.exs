@@ -27,9 +27,9 @@ defmodule GeoLocationService.SchemalessFileLoaderTest do
   describe "Fill Loader using Schemaless query method" do
     test "sync_data/1 with file path to import csv file and save it to the database" do
       assert {:ok, statistics} = SchemalessFileLoader.sync_data(@test_file_path)
-      assert statistics.processed == 54
-      assert statistics.accepted == 44
-      assert statistics.discarded == 10
+      assert statistics.processed == 1000
+      assert statistics.accepted == 863
+      assert statistics.discarded == 137
       assert statistics.processed_time != nil
     end
 

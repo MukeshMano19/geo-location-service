@@ -1,6 +1,9 @@
 defmodule GeoLocationService.Services.FileLoader do
   @moduledoc """
-    The Fileloader module helps to import the csv file.
+    The Fileloader module helps to import the csv file. 
+    Here we used Ecto.Multi.create for batch inserting the records.
+    Eventhough, it's not recommended for handling large csv files and it may end up with database timeout issues.
+    If you are importing huge file, please refer SchemalessFileLoader Module.
   """
 
   alias GeoLocationService.Repo

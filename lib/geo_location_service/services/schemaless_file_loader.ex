@@ -2,9 +2,10 @@ defmodule GeoLocationService.Services.SchemalessFileLoader do
   @moduledoc """
     The Fileloader module helps to import the csv file.
 
-    Here we used Schema-less transactions (i.e, Ecto.Multi.insert_all).
+    Here we used Schema-less queries (i.e, Ecto.Multi.insert_all).
     It's designed for more direct operations with the database and it's not operate over changesets. 
     So we added the custom validations for validating the records. 
+    And it's suitable for handling huge csv files.
   """
 
   alias GeoLocationService.Repo
