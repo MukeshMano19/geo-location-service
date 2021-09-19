@@ -9,8 +9,8 @@ defmodule GeoLocationService.Services.FileLoader do
   alias GeoLocationService.Repo
   alias GeoLocationService.Services.Dataset
 
-  @file_path "data_files/test-datasets.csv"
-  @batch_size 25000
+  @file_path "data_files/datasets.csv"
+  @batch_size 5000
 
   @doc """
   Import the csv file and returns the statistics of the import status.
@@ -36,6 +36,8 @@ defmodule GeoLocationService.Services.FileLoader do
       accepted: accepted,
       discarded: discarded
     }
+
+    IO.inspect(statistics, label: "Statistics")
 
     {:ok, statistics}
   end
@@ -138,7 +140,7 @@ defmodule GeoLocationService.Services.FileLoader do
           multi
       end
     end)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: :infinity)
   end
 
   @doc """
