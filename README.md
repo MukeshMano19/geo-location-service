@@ -63,16 +63,7 @@ To kill one or more running containers,
 
 ### Non Dockerized Method
 
-Change database hostname to `localhost` to access the local postgresql database.
-
-```
-in /config/dev.exs
-
-config :geo_location_service, GeoLocationService.Repo,
-  ....
-  hostname: "localhost", 
-  ....
-```
+Make sure you installed [Elixir](https://elixir-lang.org/install.html), [Phoenix framework](https://hexdocs.pm/phoenix/installation.html) and [Postgresql](https://www.postgresql.org/download/) before you are going to setup the project.
 
 To setup the project and start phoenix endpoind,
 
