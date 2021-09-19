@@ -119,7 +119,7 @@ defmodule GeoLocationService.Services.SchemalessFileLoader do
     IO.inspect("Validating the records ...")
 
     datasets
-    |> Stream.uniq_by(fn v -> v.ip_address end)
+    |> Stream.uniq_by(& &1.ip_address)
     |> Stream.filter(&(validate_ip(&1) != false))
     |> Stream.filter(&(validate_nil(&1) != false))
     |> Enum.to_list()
