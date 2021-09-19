@@ -30,8 +30,8 @@ config :logger, level: :info
 
 config :geo_location_service, GeoLocationService.Scheduler,
   jobs: [
-    # Every 15 minutes
-    {"*/15 * * * *", {GeoLocationService.Services.SchemalessFileLoader, :sync_data, []}}
+    # Runs every midnight:
+    {"@daily", {GeoLocationService.Services.SchemalessFileLoader, :sync_data, []}}
   ]
 
 # ## SSL Support
