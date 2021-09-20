@@ -1,6 +1,8 @@
 defmodule GeoLocationService.Services.SchemalessFileLoader do
   @moduledoc """
-    The Fileloader module helps to import the csv file.
+    The SchemalessFileLoader module helps to import the csv file.
+
+    It takes maximum 100 seconds to insert 1M records.
 
     Here we used Schema-less queries (i.e, Ecto.Multi.insert_all).
     It's designed for more direct operations with the database and it's not operate over changesets. 
@@ -47,7 +49,7 @@ defmodule GeoLocationService.Services.SchemalessFileLoader do
   """
   @spec get_records_as_map(String.t()) :: list
   def get_records_as_map(file) do
-    IO.inspect("Get records as map ...")
+    IO.inspect("Parcing the CSV file ...")
     {header, data_lines} = get_header_and_data(file)
 
     data_lines

@@ -1,7 +1,11 @@
 defmodule GeoLocationService.Services.NimbleFileLoader do
   @moduledoc """
+    The NimbleFileLoader module helps to import the csv file.
+    
     Here we used Nimble CSV parser for parsing the CSV file.
     It reduces the initial parsing time.
+
+    It takes maximum 60 seconds to insert 1M records.
 
     Here we used Schema-less queries (i.e, Ecto.Multi.insert_all).
     It's designed for more direct operations with the database and it's not operate over changesets. 
@@ -15,14 +19,17 @@ defmodule GeoLocationService.Services.NimbleFileLoader do
   @batch_size 5000
   @valid_ip_regex ~r/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
 
-  def import() do
-    {micro_seconds, result} = :timer.tc(fn -> parse_file() |> dump_data_to_db end)
+  @spec sync_data(String.t()) :: {:ok, map}
+  def sync_data(file \\ @file_path) do
+    {micro_seconds, result} = :timer.tc(fn -> parse_file(file) |> dump_data_to_db end)
 
     {:ok, Map.put(result, :processed_time, micro_seconds / 1_000_000)}
   end
 
-  def parse_file() do
-    @file_path
+  @spec parse_file(String.t()) :: list
+  def parse_file(file) do
+    IO.inspect("Parsing the CSV file ...")
+    file
     |> File.stream!()
     |> NimbleCSV.RFC4180.parse_stream()
     |> Stream.map(fn [

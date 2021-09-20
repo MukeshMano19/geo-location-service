@@ -77,8 +77,8 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :geo_location_service, GeoLocationService.Scheduler,
-  jobs: [
-    # Every 60 minutes
-    {"*/60 * * * *", {GeoLocationService.Services.SchemalessFileLoader, :sync_data, []}}
-  ]
+# config :geo_location_service, GeoLocationService.Scheduler,
+#   jobs: [
+#     # Every 60 minutes
+#     {"*/60 * * * *", {GeoLocationService.Services.SchemalessFileLoader, :sync_data, []}}
+#   ]

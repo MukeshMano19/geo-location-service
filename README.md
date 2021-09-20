@@ -41,7 +41,7 @@ To start your Phoenix server using Docker,
 > docker-compose up
 ```
 
-Importing geolocation datasets from the CSV file take maximum 120 seconds to insert 1 Million records based on your system configuration.
+Importing geolocation datasets from the CSV file take maximum 90 seconds to insert 1 Million records based on your system configuration.
 
 To insert seeds, 
 
