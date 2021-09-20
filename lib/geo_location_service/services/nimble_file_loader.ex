@@ -1,6 +1,7 @@
 defmodule GeoLocationService.Services.NimbleFileLoader do
   @moduledoc """
-    The Fileloader module helps to import the csv file.
+    Here we used Nimble CSV parser for parsing the CSV file.
+    It reduces the initial parsing time.
 
     Here we used Schema-less queries (i.e, Ecto.Multi.insert_all).
     It's designed for more direct operations with the database and it's not operate over changesets. 
@@ -15,13 +16,12 @@ defmodule GeoLocationService.Services.NimbleFileLoader do
   @valid_ip_regex ~r/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
 
   def import() do
-    {micro_seconds, result} = :timer.tc(fn -> start() end)
+    {micro_seconds, result} = :timer.tc(fn -> parse_file() |> dump_data_to_db end)
 
-    IO.inspect(micro_seconds / 1_000_000, label: "Time")
-    IO.inspect(length(result), label: "Total")
+    {:ok, Map.put(result, :processed_time, micro_seconds / 1_000_000)}
   end
 
-  def start() do
+  def parse_file() do
     @file_path
     |> File.stream!()
     |> NimbleCSV.RFC4180.parse_stream()
@@ -35,81 +35,16 @@ defmodule GeoLocationService.Services.NimbleFileLoader do
                        mystery_value
                      ] ->
       %{
-        ip_address: :binary.copy(ip_address),
-        country_code: :binary.copy(country_code),
-        city: :binary.copy(city),
-        country: :binary.copy(country),
-        latitude: parse_data("latitude", :binary.copy(latitude)),
-        longitude: parse_data("longitude", :binary.copy(longitude)),
-        mystery_value: parse_data("mystery_value", :binary.copy(mystery_value))
+        ip_address: parse_data("", ip_address),
+        country_code: parse_data("", country_code),
+        city: parse_data("", city),
+        country: parse_data("", country),
+        latitude: parse_data("latitude", latitude),
+        longitude: parse_data("longitude", longitude),
+        mystery_value: parse_data("mystery_value", mystery_value)
       }
     end)
     |> Enum.to_list()
-  end
-
-  @doc """
-  Import the csv file and returns the statistics of the import status.
-
-  ## Examples
-      
-      iex> sync_data("data_files/datasets.csv")
-      Statistics: %{
-        processed_time: 12.56,
-        processed: 100,
-        accepted: 70,
-        discarded: 30
-      }
-
-  """
-  @spec sync_data(String.t()) :: {:ok, map}
-  def sync_data(file \\ @file_path) do
-    {micro_seconds, result} = :timer.tc(fn -> get_records_as_map(file) |> dump_data_to_db end)
-
-    {:ok, Map.put(result, :processed_time, micro_seconds / 1_000_000)}
-  end
-
-  @doc """
-  Parse csv file and returns csv records as map.
-
-  ## Examples
-
-      iex> get_records_as_map("data_files/datasets.csv")
-      [%{ip_address: "12.56.34.6", city: "ooty", ...}, ...]
-
-  """
-  @spec get_records_as_map(String.t()) :: list
-  def get_records_as_map(file) do
-    IO.inspect("Get records as map ...")
-    {header, data_lines} = get_header_and_data(file)
-
-    data_lines
-    |> Stream.map(&(Enum.zip(header, &1) |> Enum.into(%{})))
-    |> Stream.map(
-      &for {key, val} <- &1, into: %{}, do: {String.to_atom(key), parse_data(key, val)}
-    )
-    |> Enum.to_list()
-  end
-
-  @doc """
-  Parse csv file and returns header and data lines separately.
-
-  ## Examples
-
-      iex> get_header_and_data("data_files/datasets.csv")
-      {["ip_address", "city", "country", ...], ["123, 45, 56,3", "ooty", "india", .., ....]}
-
-  """
-  @spec get_header_and_data(String.t()) :: {list, list}
-  def get_header_and_data(file) do
-    content_lines =
-      File.stream!(file)
-      |> Stream.map(&String.trim(&1))
-      |> Stream.filter(&(String.length(&1) != 0))
-      |> Stream.map(&String.split(&1, ","))
-      |> Enum.to_list()
-
-    [header | data_lines] = content_lines
-    {header, data_lines}
   end
 
   @doc """
