@@ -51,6 +51,7 @@ defmodule GeoLocationService.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:ex_doc, "~> 0.25.2"},
       {:quantum, "~> 3.0"},
+      {:nimble_csv, "~> 1.1"},
       # For Table pagination
       {:scrivener_ecto, "~> 2.7"}
     ]

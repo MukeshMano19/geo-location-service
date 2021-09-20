@@ -79,6 +79,6 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :geo_location_service, GeoLocationService.Scheduler,
   jobs: [
-    # Every 15 minutes
-    {"*/30 * * * *", {GeoLocationService.Services.SchemalessFileLoader, :sync_data, []}}
+    # Every 60 minutes
+    {"*/60 * * * *", {GeoLocationService.Services.SchemalessFileLoader, :sync_data, []}}
   ]
